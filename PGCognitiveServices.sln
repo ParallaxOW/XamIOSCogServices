@@ -1,0 +1,27 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PGCognitiveServices", "PGCognitiveServices\PGCognitiveServices.csproj", "{6D728149-A389-4DC6-B70F-40B351DD17FA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|iPhoneSimulator = Debug|iPhoneSimulator
+		Release|iPhone = Release|iPhone
+		Release|iPhoneSimulator = Release|iPhoneSimulator
+		Debug|iPhone = Debug|iPhone
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6D728149-A389-4DC6-B70F-40B351DD17FA}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
+		{6D728149-A389-4DC6-B70F-40B351DD17FA}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
+		{6D728149-A389-4DC6-B70F-40B351DD17FA}.Release|iPhone.ActiveCfg = Release|iPhone
+		{6D728149-A389-4DC6-B70F-40B351DD17FA}.Release|iPhone.Build.0 = Release|iPhone
+		{6D728149-A389-4DC6-B70F-40B351DD17FA}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
+		{6D728149-A389-4DC6-B70F-40B351DD17FA}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
+		{6D728149-A389-4DC6-B70F-40B351DD17FA}.Debug|iPhone.ActiveCfg = Debug|iPhone
+		{6D728149-A389-4DC6-B70F-40B351DD17FA}.Debug|iPhone.Build.0 = Debug|iPhone
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		Policies = $0
+		$0.VersionControlPolicy = $1
+	EndGlobalSection
+EndGlobal
