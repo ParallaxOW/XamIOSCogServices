@@ -17,3 +17,4 @@ Demonstrates use of the following APIs from Microsoft Azure Cognitive Services t
 * Emotion
 
 To use these APIs you must have an API key from the [Azure Portal](http://portal.azure.com)
+
