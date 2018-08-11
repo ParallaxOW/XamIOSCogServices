@@ -20,6 +20,10 @@ namespace PGCognitiveServices
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
+        UIKit.UIButton Cancel { get; set; }
+
+        [Outlet]
+        [GeneratedCode ("iOS Designer", "1.0")]
         UIKit.UITextField FaceEndpoint { get; set; }
 
         [Outlet]
@@ -39,6 +43,11 @@ namespace PGCognitiveServices
             if (btnSaveSettings != null) {
                 btnSaveSettings.Dispose ();
                 btnSaveSettings = null;
+            }
+
+            if (Cancel != null) {
+                Cancel.Dispose ();
+                Cancel = null;
             }
 
             if (FaceEndpoint != null) {

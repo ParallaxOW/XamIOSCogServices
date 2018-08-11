@@ -5,6 +5,9 @@ using Microsoft.ProjectOxford.Vision.Contract;
 using Plugin.Media;
 using Plugin.Media.Abstractions;
 using UIKit;
+using PGCognitiveServices.Helpers;
+using CoreGraphics;
+using CoreAnimation;
 
 namespace PGCognitiveServices
 {
@@ -12,7 +15,6 @@ namespace PGCognitiveServices
     {
 
         private MediaFile image;
-        private CameraDevice cameraDevice;
 
         protected ViewController(IntPtr handle) : base(handle)
         {
@@ -24,7 +26,23 @@ namespace PGCognitiveServices
             base.ViewDidLoad();
             // Perform any additional setup after loading the view, typically from a nib.
 
+            this.Title = "Using Microsoft Cognitive Services API with Xamarin IOS";
+
             SetSendButtonStates(false);
+
+            var width = UIScreen.MainScreen.Bounds.Width * 0.45;
+            var height = UIScreen.MainScreen.Bounds.Height * 0.45;
+
+            CGSize imageSize = new CGSize(width, height);
+            CGPoint imageLoc = CapturedImage.Frame.Location;
+
+            CapturedImage.Frame = new CGRect(imageLoc, imageSize);
+
+            CapturedImage.Layer.BorderColor = UIColor.Purple.CGColor;
+            CapturedImage.Layer.BorderWidth = 2.0f;
+
+            ImageData.Layer.BorderColor = UIColor.Purple.CGColor;
+            ImageData.Layer.BorderWidth = 2.0f;
 
             Front.TouchUpInside += ToggleCameraSwitches;
             Back.TouchUpInside += ToggleCameraSwitches;
@@ -50,18 +68,34 @@ namespace PGCognitiveServices
 
                 image = await CrossMedia.Current.TakePhotoAsync(new Plugin.Media.Abstractions.StoreCameraMediaOptions()
                 {
-                    PhotoSize = Plugin.Media.Abstractions.PhotoSize.Medium,
+                    PhotoSize = PhotoSize.Custom, 
+                    CustomPhotoSize = 45,
                     DefaultCamera = camera
                 });
 
-                NSData imageData = NSData.FromStream(image.GetStream());
-                CapturedImage.Image = UIImage.LoadFromData(imageData).ResizeImageWithAspectRatio((float)CapturedImage.Frame.Width, (float)CapturedImage.Frame.Height);
 
-                SetSendButtonStates(true);
+                if (image != null)
+                {
+                    NSData imageData = NSData.FromStream(image.GetStream());
+                    CapturedImage.Image = UIImage.LoadFromData(imageData);
+
+                    SetSendButtonStates(true);
+                }
+            };
+
+            ClearPicture.TouchUpInside += (s, e) => 
+            {
+                image = null;
+                CapturedImage.Image = null;
+                SetSendButtonStates(false);
+
+                ImageData.Text = string.Empty;
             };
 
             Describe.TouchUpInside += async (s, e) =>
             {
+                ImageData.Text = string.Empty;
+
                 if (!SettingsService.VisionAPIConfigured)
                 {
                     DisplayMessage(
@@ -103,6 +137,8 @@ namespace PGCognitiveServices
 
             OCR.TouchUpInside += async (s, e) =>
             {
+                ImageData.Text = string.Empty;
+
                 if (!SettingsService.VisionAPIConfigured)
                 {
                     DisplayMessage(
@@ -132,6 +168,48 @@ namespace PGCognitiveServices
                 ImageData.Text = readText;
             };
 
+            Emotion.TouchUpInside += async (sender, e) => 
+            {
+                ImageData.Text = string.Empty;
+
+                FaceService faceClient = new FaceService();
+                var analysis = await faceClient.DetectAsync(image.GetStream());
+
+                var data = "";
+
+                UIColor[] borderColors = { UIColor.Red, UIColor.Green, UIColor.Purple, UIColor.Yellow };
+                string[] borderColorStrings = { "Red", "Green", "Purple", "Yellow" };
+
+                //counter to select the correct border color
+                int count = 0;
+                foreach(Helpers.Face f in analysis)
+                {
+                    var scale = UIScreen.MainScreen.Scale;
+                    CGRect faceBorder = new CGRect(f.FaceRectangle.Left, f.FaceRectangle.Top, f.FaceRectangle.Width, f.FaceRectangle.Height);
+
+                    CapturedImage.Image = CapturedImage.Image.DrawRectangleOnImage(faceBorder, borderColors[count]);
+
+                    data += "Face ID: " + f.FaceId + "\n";
+                    data += "Border Color: " + borderColorStrings[count] + "\n";
+                    data += f.FaceAttributes.age.ToString() + "yo " + f.FaceAttributes.gender + "\n\n";
+
+                    data += "Anger: " + Math.Round(f.FaceAttributes.emotion.anger * 100, 2).ToString() + "%\n";
+                    data += "Contempt: " + Math.Round(f.FaceAttributes.emotion.contempt * 100, 2).ToString() + "%\n";
+                    data += "Disgust: " + Math.Round(f.FaceAttributes.emotion.disgust * 100, 2).ToString() + "%\n";
+                    data += "Fear: " + Math.Round(f.FaceAttributes.emotion.fear * 100, 2).ToString() + "%\n";
+                    data += "Happiness: " + Math.Round(f.FaceAttributes.emotion.happiness * 100, 2).ToString() + "%\n";
+                    data += "Neutral: " + Math.Round(f.FaceAttributes.emotion.neutral * 100, 2).ToString() + "%\n";
+                    data += "Sadness: " + Math.Round(f.FaceAttributes.emotion.sadness * 100, 2).ToString() + "%\n";
+                    data += "Surprise: " + Math.Round(f.FaceAttributes.emotion.surprise * 100, 2).ToString() + "%\n";
+
+                    data += "\n\n";
+
+                    //increment counter for border colors
+                    count++;
+                }
+
+                ImageData.Text = data;
+            };
         }
 
         private void ToggleCameraSwitches(object sender, EventArgs e)
@@ -142,23 +220,19 @@ namespace PGCognitiveServices
             {
                 if (theSwitch.On)
                 {
-                    cameraDevice = CameraDevice.Front;
                     Back.SetState(false, true);
                 }else
                 {
-                    cameraDevice = CameraDevice.Rear;
                     Back.SetState(true, true);
                 }
             }else if(theSwitch == this.Back)
             {
                 if (theSwitch.On)
                 {
-                    cameraDevice = CameraDevice.Front;
                     Front.SetState(false, true);
                 }
                 else
                 {
-                    cameraDevice = CameraDevice.Rear;
                     Front.SetState(true, true);
                 }
             }

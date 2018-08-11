@@ -2,7 +2,7 @@
 using Plugin.Settings;
 using Plugin.Settings.Abstractions;
 
-namespace PGCognitiveServices
+namespace PGCognitiveServices.Helpers
 {
     public static class SettingsService
     {

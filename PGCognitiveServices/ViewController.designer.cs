@@ -27,6 +27,10 @@ namespace PGCognitiveServices
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
+        UIKit.UIButton ClearPicture { get; set; }
+
+        [Outlet]
+        [GeneratedCode ("iOS Designer", "1.0")]
         UIKit.UIButton Describe { get; set; }
 
         [Outlet]
@@ -60,6 +64,11 @@ namespace PGCognitiveServices
             if (CaptureImage != null) {
                 CaptureImage.Dispose ();
                 CaptureImage = null;
+            }
+
+            if (ClearPicture != null) {
+                ClearPicture.Dispose ();
+                ClearPicture = null;
             }
 
             if (Describe != null) {
